@@ -1,0 +1,9 @@
+./images/45.tif
+./images/46.tif
+./images/47.tif
+./images/48.tif
+./images/49.tif
+./images/50.tif
+./images/51.tif
+./images/52.tif
+./images/53.tif

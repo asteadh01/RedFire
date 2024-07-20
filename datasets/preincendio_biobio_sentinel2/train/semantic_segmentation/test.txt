@@ -1,0 +1,9 @@
+./images/24.tif
+./images/25.tif
+./images/26.tif
+./images/27.tif
+./images/28.tif
+./images/29.tif
+./images/30.tif
+./images/31.tif
+./images/32.tif

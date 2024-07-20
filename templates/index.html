@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedFire SOS</title>
+    <style>
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 8px;   
+        }
+        th {
+            font-size: 50px;
+        }
+        img {
+            max-width: 100%;
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Subir Imagen</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="file" accept="image/*">
+        <button type="submit" id="uploadButton">Subir Imagen</button>
+    </form>
+    <h1 id="process" style="display: none">Procesar Imagen</h1>
+    <button id="processButton" style="display:none;">Procesar Imagen</button>
+    <h1 id="mensaje" style="display: none;">Procesando ...</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Original</th>
+                <th>Label con Contornos</th>
+                <th>Modificada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><img id="original-image" src="" alt="Imagen original" style="display:none;"></td>
+                <td><img id="label-image" src="" alt="Imagen con contornos" style="display:none;"></td>
+                <td><img id="modified-image" src="" alt="Imagen modificada" style="display:none;"></td>
+            </tr>
+        </tbody>
+    </table>
+    <button id="resetButton" style="display:none;">Resetear Imagenes</button>
+    <script>
+        let uploadedFile = null;
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const fileInput = document.getElementById('imageInput');
+            if (fileInput.files.length > 0) {
+                uploadedFile = fileInput.files[0];
+                formData.append('file', uploadedFile);
+
+                // Mostrar la imagen original
+                const originalUrl = URL.createObjectURL(uploadedFile);
+                document.getElementById('original-image').style.display = 'block';
+                document.getElementById('original-image').src = originalUrl;
+
+                // Enviar la imagen al servidor
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('processButton').style.display = 'block';
+                        document.getElementById('process').style.display = 'block';
+                        document.getElementById('resetButton').style.display = 'block';
+                        
+
+                    } else {
+                        console.error('Error al subir la imagen');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+
+        document.getElementById('processButton').addEventListener('click', function() {
+            document.getElementById('mensaje').style.display = 'block';
+            fetch('/process', {
+                method: 'POST',
+                body: JSON.stringify({ filename: uploadedFile.name }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar las imágenes generadas por sentinel.py
+                document.getElementById('label-image').src = data.label_url;
+                document.getElementById('modified-image').src = data.final_url;
+                document.getElementById('label-image').style.display = 'block';
+                document.getElementById('modified-image').style.display = 'block';
+                document.getElementById('mensaje').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        // Evento para resetear las imágenes al hacer clic en el botón de reset
+        document.getElementById('resetButton').addEventListener('click', function() {
+            document.getElementById('original-image').src = '';
+            document.getElementById('label-image').src = '';
+            document.getElementById('modified-image').src = '';
+            document.getElementById('label-image').style.display = 'none';
+            document.getElementById('modified-image').style.display = 'none';
+            document.getElementById('original-image').style.display = 'none';
+            document.getElementById('process').style.display = 'none';
+            document.getElementById('processButton').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

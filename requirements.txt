@@ -1,0 +1,17 @@
+odc.stac
+rasterio
+rioxarray
+#dask[distributed]
+xarray
+matplotlib
+pystac_client
+scikit-learn==1.2.2
+imblearn
+torch
+numpy
+Pillow
+tifffile
+opencv-python
+matplotlib
+scikit-learn
+flask
