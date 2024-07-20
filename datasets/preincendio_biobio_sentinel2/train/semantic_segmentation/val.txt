@@ -1,0 +1,6 @@
+./images/18.tif
+./images/19.tif
+./images/20.tif
+./images/21.tif
+./images/22.tif
+./images/23.tif
